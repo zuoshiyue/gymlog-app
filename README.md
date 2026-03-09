@@ -1,6 +1,19 @@
 # GymLog - 健身训练记录应用
 
+[![Android Build](https://github.com/zuoshiyue/gymlog-app/actions/workflows/build.yml/badge.svg)](https://github.com/zuoshiyue/gymlog-app/actions/workflows/build.yml)
+
 基于 GymLog 二次开发的 Android 健身应用，使用 Kotlin + Jetpack Compose 构建。
+
+## 📥 下载 APK
+
+### 从 GitHub Actions 下载
+
+1. 访问 [Actions 页面](https://github.com/zuoshiyue/gymlog-app/actions)
+2. 点击最新的构建运行
+3. 在页面底部 **Artifacts** 部分下载 `app-release.zip`
+4. 解压后获取 APK 文件并安装
+
+> **注意**: Debug 版本可直接安装；Release 版本需要配置签名密钥（见 [SIGNING.md](SIGNING.md)）
 
 ## 🎯 核心功能
 
