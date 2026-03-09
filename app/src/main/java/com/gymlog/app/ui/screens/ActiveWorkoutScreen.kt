@@ -1,5 +1,7 @@
 package com.gymlog.app.ui.screens
 
+package com.gymlog.app.ui.screens
+
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gymlog.app.data.model.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 /**
@@ -84,13 +87,7 @@ fun ActiveWorkoutScreen(
                     activeWorkoutViewModel.previousExercise()
                 },
                 onNext = {
-                    // 保存当前动作
-                    viewModelScope.launch {
-                        activeWorkoutViewModel.saveCurrentExercise(
-                            currentExercise,
-                            currentExercise.muscleGroups
-                        )
-                    }
+                    // 保存当前动作 - 由调用方处理
                     activeWorkoutViewModel.nextExercise()
                 },
                 canGoPrevious = currentExerciseIndex > 0
@@ -399,7 +396,7 @@ private fun WorkoutCompleteScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                imageVector = Icons.Default.celebration,
+                imageVector = Icons.Filled.EmojiEvents,
                 contentDescription = null,
                 modifier = Modifier.size(80.dp),
                 tint = MaterialTheme.colorScheme.primary

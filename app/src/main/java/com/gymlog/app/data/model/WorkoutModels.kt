@@ -1,14 +1,20 @@
 package com.gymlog.app.data.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.gymlog.app.data.local.Converters
+
 /**
  * 健身计划模板 - 三分化训练（推/拉/腿）
  */
+@Entity(tableName = "workout_plans")
 data class WorkoutPlan(
-    val id: String,
+    @PrimaryKey val id: String,
     val name: String,
     val description: String = "",
     val splitType: SplitType = SplitType.PUSH_PULL_LEGS,
-    val workoutDays: List<WorkoutDay>,
+    @TypeConverters(Converters::class) val workoutDays: List<WorkoutDay>,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 )
@@ -59,13 +65,14 @@ enum class ExerciseCategory {
 /**
  * 训练记录 - 单次训练的实际执行
  */
+@Entity(tableName = "workout_sessions")
 data class WorkoutSession(
-    val id: String,
+    @PrimaryKey val id: String,
     val planId: String,
     val workoutDayId: String,
     val startTime: Long,
     val endTime: Long? = null,
-    val completedExercises: List<CompletedExercise>,
+    @TypeConverters(Converters::class) val completedExercises: List<CompletedExercise>,
     val totalDuration: Int = 0,       // 总时长（分钟）
     val notes: String = "",
     val rating: Int = 0               // 训练评分 1-5

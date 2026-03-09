@@ -6,8 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.gymlog.app.data.local.GymLogDatabase
+import com.gymlog.app.data.model.WorkoutDay
 import com.gymlog.app.data.repository.WorkoutRepository
 import com.gymlog.app.ui.theme.GymLogTheme
+import kotlinx.coroutines.runBlocking
 
 /**
  * 应用主导航
@@ -108,6 +110,8 @@ fun GymLogApp() {
         }
     }
 }
+
+// 移除重复的 runBlocking 定义，使用 kotlinx.coroutines.runBlocking
 
 /**
  * 训练计划详情屏幕
@@ -282,9 +286,4 @@ fun HistoryScreen(
             }
         }
     }
-}
-
-// runBlocking helper for composable
-fun <T> runBlocking(block: suspend () -> T): T {
-    return kotlinx.coroutines.runBlocking { block() }
 }
