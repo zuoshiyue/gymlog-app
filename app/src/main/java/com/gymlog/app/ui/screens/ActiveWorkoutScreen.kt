@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 /**
  * 训练中屏幕 - 包含实时调整和休息计时器
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActiveWorkoutScreen(
     workoutDay: WorkoutDay,
@@ -142,6 +144,7 @@ fun ActiveWorkoutScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ExerciseHeader(exercise: Exercise) {
     Card(
@@ -180,6 +183,7 @@ private fun ExerciseHeader(exercise: Exercise) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SetRow(
     set: CompletedSet,
@@ -263,6 +267,7 @@ private fun SetRow(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RestTimerDisplay(
     seconds: Int,
@@ -317,6 +322,7 @@ private fun RestTimerDisplay(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WorkoutBottomBar(
     isResting: Boolean,
@@ -373,6 +379,7 @@ private fun WorkoutBottomBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WorkoutCompleteScreen(
     onComplete: () -> Unit,

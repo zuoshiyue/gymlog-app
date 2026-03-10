@@ -1,6 +1,13 @@
 package com.gymlog.app.ui.screens
 
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,6 +25,7 @@ import kotlinx.coroutines.runBlocking
 /**
  * 应用主导航
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GymLogApp() {
     // 初始化数据库和 Repository
@@ -115,11 +123,10 @@ fun GymLogApp() {
     }
 }
 
-// 移除重复的 runBlocking 定义，使用 kotlinx.coroutines.runBlocking
-
 /**
  * 训练计划详情屏幕
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanDetailScreen(
     planId: String,
@@ -136,47 +143,44 @@ fun PlanDetailScreen(
         return
     }
 
-    androidx.compose.material3.Scaffold(
+    Scaffold(
         topBar = {
-            androidx.compose.material3.TopAppBar(
-                title = { androidx.compose.material3.Text(plan.name) },
+            TopAppBar(
+                title = { Text(plan.name) },
                 navigationIcon = {
-                    androidx.compose.material3.IconButton(onClick = onBack) {
-                        androidx.compose.material3.Icon(
-                            androidx.compose.material.icons.Icons.Default.ArrowBack,
-                            contentDescription = "返回"
-                        )
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "返回")
                     }
                 }
             )
         }
     ) { padding ->
-        androidx.compose.foundation.layout.Column(
-            modifier = androidx.compose.ui.Modifier
+        Column(
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
             // 计划描述
-            androidx.compose.material3.Card(
-                modifier = androidx.compose.ui.Modifier
+            Card(
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                androidx.compose.foundation.layout.Column(
-                    modifier = androidx.compose.ui.Modifier.padding(16.dp)
+                Column(
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    androidx.compose.material3.Text(
+                    Text(
                         text = plan.description,
-                        style = androidx.compose.material3.MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 }
             }
 
             // 训练日列表
-            androidx.compose.foundation.lazy.LazyColumn(
-                modifier = androidx.compose.ui.Modifier.fillMaxSize(),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(plan.workoutDays) { day ->
                     WorkoutDayCard(
@@ -189,42 +193,43 @@ fun PlanDetailScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WorkoutDayCard(
     workoutDay: WorkoutDay,
     onStartWorkout: () -> Unit
 ) {
-    androidx.compose.material3.Card(
-        modifier = androidx.compose.ui.Modifier.fillMaxWidth(),
-        elevation = androidx.compose.material3.CardDefaults.cardElevation(defaultElevation = 2.dp)
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        androidx.compose.foundation.layout.Column(
-            modifier = androidx.compose.ui.Modifier
+        Column(
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            androidx.compose.material3.Text(
+            Text(
                 text = workoutDay.name,
-                style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
             )
-            androidx.compose.foundation.layout.Spacer(modifier = androidx.compose.ui.Modifier.height(8.dp))
-            androidx.compose.material3.Text(
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
                 text = "${workoutDay.exercises.size} 个动作 · 预计 ${workoutDay.estimatedDuration} 分钟",
-                style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
-                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            androidx.compose.foundation.layout.Spacer(modifier = androidx.compose.ui.Modifier.height(16.dp))
-            androidx.compose.material3.Button(
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
                 onClick = onStartWorkout,
-                modifier = androidx.compose.ui.Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
-                androidx.compose.material3.Icon(
-                    androidx.compose.material.icons.Icons.Default.PlayArrow,
+                Icon(
+                    Icons.Default.PlayArrow,
                     contentDescription = null
                 )
-                androidx.compose.foundation.layout.Spacer(modifier = androidx.compose.ui.Modifier.width(8.dp))
-                androidx.compose.material3.Text("开始训练")
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("开始训练")
             }
         }
     }
@@ -233,55 +238,53 @@ private fun WorkoutDayCard(
 /**
  * 训练历史屏幕
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(
     sessions: List<com.gymlog.app.data.model.WorkoutSession>,
     personalBests: List<PersonalBest>,
     onBack: () -> Unit
 ) {
-    androidx.compose.material3.Scaffold(
+    Scaffold(
         topBar = {
-            androidx.compose.material3.TopAppBar(
-                title = { androidx.compose.material3.Text("训练历史") },
+            TopAppBar(
+                title = { Text("训练历史") },
                 navigationIcon = {
-                    androidx.compose.material3.IconButton(onClick = onBack) {
-                        androidx.compose.material3.Icon(
-                            androidx.compose.material.icons.Icons.Default.ArrowBack,
-                            contentDescription = "返回"
-                        )
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "返回")
                     }
                 }
             )
         }
     ) { padding ->
-        androidx.compose.foundation.layout.Column(
-            modifier = androidx.compose.ui.Modifier
+        Column(
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
             // 个人最佳
             if (personalBests.isNotEmpty()) {
-                androidx.compose.material3.Text(
+                Text(
                     text = "个人最佳",
-                    style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
-                    modifier = androidx.compose.ui.Modifier.padding(16.dp)
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(16.dp)
                 )
-                androidx.compose.foundation.lazy.LazyColumn(
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp),
-                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+                LazyColumn(
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(personalBests) { pb ->
-                        androidx.compose.material3.Card {
-                            androidx.compose.foundation.layout.Row(
-                                modifier = androidx.compose.ui.Modifier
+                        Card {
+                            Row(
+                                modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(12.dp),
-                                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                androidx.compose.material3.Text(pb.exerciseName)
-                                androidx.compose.material3.Text(
+                                Text(pb.exerciseName)
+                                Text(
                                     text = "${pb.maxWeight}kg x ${pb.maxReps}",
-                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                    fontWeight = FontWeight.Bold
                                 )
                             }
                         }
