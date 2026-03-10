@@ -19,7 +19,6 @@ import com.gymlog.app.data.local.PersonalBest
 import com.gymlog.app.data.model.WorkoutDay
 import com.gymlog.app.data.model.WorkoutSession
 import com.gymlog.app.data.repository.WorkoutRepository
-import com.gymlog.app.ui.theme.GymLogTheme
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -35,90 +34,88 @@ fun GymLogApp() {
 
     val navController = rememberNavController()
 
-    GymLogTheme {
-        NavHost(
-            navController = navController,
-            startDestination = "plans"
-        ) {
-            composable("plans") {
-                val viewModel: PlanListViewModel = viewModel {
-                    PlanListViewModel(repository)
-                }
-                val plans by viewModel.plans.collectAsState()
+    NavHost(
+        navController = navController,
+        startDestination = "plans"
+    ) {
+        composable("plans") {
+            val viewModel: PlanListViewModel = viewModel {
+                PlanListViewModel(repository)
+            }
+            val plans by viewModel.plans.collectAsState()
 
-                PlanListScreen(
-                    plans = plans,
-                    onImportDefault = { viewModel.importDefaultPlan() },
-                    onPlanClick = { plan ->
-                        navController.navigate("plan_detail/${plan.id}")
-                    },
-                    onDeletePlan = { plan ->
-                        viewModel.deletePlan(plan)
-                    }
-                )
+            PlanListScreen(
+                plans = plans,
+                onImportDefault = { viewModel.importDefaultPlan() },
+                onPlanClick = { plan ->
+                    navController.navigate("plan_detail/${plan.id}")
+                },
+                onDeletePlan = { plan ->
+                    viewModel.deletePlan(plan)
+                }
+            )
+        }
+
+        composable("plan_detail/{planId}") { backStackEntry ->
+            val planId = backStackEntry.arguments?.getString("planId") ?: return@composable
+            PlanDetailScreen(
+                planId = planId,
+                repository = repository,
+                onStartWorkout = { workoutDay ->
+                    navController.navigate("workout/${planId}/${workoutDay.id}")
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("workout/{planId}/{workoutDayId}") { backStackEntry ->
+            val planId = backStackEntry.arguments?.getString("planId") ?: return@composable
+            val workoutDayId = backStackEntry.arguments?.getString("workoutDayId") ?: return@composable
+
+            // 创建训练会话并进入训练界面
+            var sessionId by remember { mutableStateOf<String?>(null) }
+
+            LaunchedEffect(Unit) {
+                val session = repository.startWorkoutSession(planId, workoutDayId)
+                sessionId = session.id
             }
 
-            composable("plan_detail/{planId}") { backStackEntry ->
-                val planId = backStackEntry.arguments?.getString("planId") ?: return@composable
-                PlanDetailScreen(
-                    planId = planId,
-                    repository = repository,
-                    onStartWorkout = { workoutDay ->
-                        navController.navigate("workout/${planId}/${workoutDay.id}")
-                    },
-                    onBack = { navController.popBackStack() }
-                )
-            }
-
-            composable("workout/{planId}/{workoutDayId}") { backStackEntry ->
-                val planId = backStackEntry.arguments?.getString("planId") ?: return@composable
-                val workoutDayId = backStackEntry.arguments?.getString("workoutDayId") ?: return@composable
-                
-                // 创建训练会话并进入训练界面
-                var sessionId by remember { mutableStateOf<String?>(null) }
-                
-                LaunchedEffect(Unit) {
-                    val session = repository.startWorkoutSession(planId, workoutDayId)
-                    sessionId = session.id
+            sessionId?.let { sid ->
+                val viewModel: ActiveWorkoutViewModel = viewModel {
+                    ActiveWorkoutViewModel(repository, sid)
                 }
 
-                sessionId?.let { sid ->
-                    val viewModel: ActiveWorkoutViewModel = viewModel {
-                        ActiveWorkoutViewModel(repository, sid)
-                    }
-                    
-                    // 获取训练日信息
-                    val plan = remember(planId) { 
-                        runBlocking { repository.getPlanById(planId) } 
-                    }
-                    val workoutDay = plan?.workoutDays?.find { it.id == workoutDayId }
-                    
-                    if (workoutDay != null) {
-                        ActiveWorkoutScreen(
-                            workoutDay = workoutDay,
-                            activeWorkoutViewModel = viewModel,
-                            onCompleteWorkout = {
-                                navController.popBackStack("plans", inclusive = false)
-                            },
-                            onBack = { navController.popBackStack() }
-                        )
-                    }
+                // 获取训练日信息
+                val plan = remember(planId) {
+                    runBlocking { repository.getPlanById(planId) }
+                }
+                val workoutDay = plan?.workoutDays?.find { it.id == workoutDayId }
+
+                if (workoutDay != null) {
+                    ActiveWorkoutScreen(
+                        workoutDay = workoutDay,
+                        activeWorkoutViewModel = viewModel,
+                        onCompleteWorkout = {
+                            navController.popBackStack("plans", inclusive = false)
+                        },
+                        onBack = { navController.popBackStack() }
+                    )
                 }
             }
+        }
 
-            composable("history") {
-                val viewModel: HistoryViewModel = viewModel {
-                    HistoryViewModel(repository)
-                }
-                val sessions by viewModel.sessions.collectAsState()
-                val personalBests by viewModel.personalBests.collectAsState()
-
-                HistoryScreen(
-                    sessions = sessions,
-                    personalBests = personalBests,
-                    onBack = { navController.popBackStack() }
-                )
+        composable("history") {
+            val viewModel: HistoryViewModel = viewModel {
+                HistoryViewModel(repository)
             }
+            val sessions by viewModel.sessions.collectAsState()
+            val personalBests by viewModel.personalBests.collectAsState()
+
+            HistoryScreen(
+                sessions = sessions,
+                personalBests = personalBests,
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }
