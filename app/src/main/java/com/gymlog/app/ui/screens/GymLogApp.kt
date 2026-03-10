@@ -5,6 +5,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.ArrowBack
 import com.gymlog.app.data.local.GymLogDatabase
 import com.gymlog.app.data.local.PersonalBest
 import com.gymlog.app.data.model.WorkoutDay
@@ -233,7 +236,7 @@ private fun WorkoutDayCard(
 @Composable
 fun HistoryScreen(
     sessions: List<com.gymlog.app.data.model.WorkoutSession>,
-    personalBests: List<com.gymlog.app.data.model.PersonalBest>,
+    personalBests: List<PersonalBest>,
     onBack: () -> Unit
 ) {
     androidx.compose.material3.Scaffold(
