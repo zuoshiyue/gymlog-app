@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 /**
  * 训练计划列表 ViewModel
  */
-class PlanListViewModel(repository: WorkoutRepository) : ViewModel() {
+class PlanListViewModel(private val repository: WorkoutRepository) : ViewModel() {
     val plans: StateFlow<List<WorkoutPlan>> = repository.allPlans
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 

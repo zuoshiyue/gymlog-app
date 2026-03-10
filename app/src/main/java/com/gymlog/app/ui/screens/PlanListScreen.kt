@@ -20,6 +20,7 @@ import com.gymlog.app.data.model.SplitType
 /**
  * 训练计划列表屏幕
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanListScreen(
     plans: List<WorkoutPlan>,
