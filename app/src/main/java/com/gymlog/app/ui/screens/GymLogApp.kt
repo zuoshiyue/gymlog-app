@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.gymlog.app.data.local.GymLogDatabase
 import com.gymlog.app.data.model.WorkoutDay
+import com.gymlog.app.data.model.WorkoutSession
 import com.gymlog.app.data.repository.WorkoutRepository
 import com.gymlog.app.ui.theme.GymLogTheme
 import kotlinx.coroutines.runBlocking
@@ -238,7 +239,7 @@ private fun WorkoutDayCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(
-    sessions: List<com.gymlog.app.data.model.WorkoutSession>,
+    sessions: List<WorkoutSession>,
     personalBests: List<PersonalBest>,
     onBack: () -> Unit
 ) {
