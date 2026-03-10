@@ -1,7 +1,6 @@
 package com.gymlog.app.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -9,15 +8,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.ArrowBack
 import com.gymlog.app.data.local.GymLogDatabase
-import com.gymlog.app.data.local.PersonalBest
 import com.gymlog.app.data.model.WorkoutDay
 import com.gymlog.app.data.repository.WorkoutRepository
 import com.gymlog.app.ui.theme.GymLogTheme

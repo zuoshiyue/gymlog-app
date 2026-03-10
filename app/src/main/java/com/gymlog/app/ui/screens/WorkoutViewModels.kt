@@ -2,8 +2,6 @@ package com.gymlog.app.ui.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gymlog.app.data.local.WorkoutDao
-import com.gymlog.app.data.local.PersonalBest
 import com.gymlog.app.data.model.*
 import com.gymlog.app.data.repository.WorkoutRepository
 import kotlinx.coroutines.flow.*
