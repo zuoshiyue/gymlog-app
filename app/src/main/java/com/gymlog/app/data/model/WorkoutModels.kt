@@ -111,3 +111,18 @@ data class ActiveWorkout(
     val isResting: Boolean = false,
     val startTime: Long = System.currentTimeMillis()
 )
+
+/**
+ * 个人最佳记录
+ */
+@Entity(tableName = "personal_bests")
+data class PersonalBest(
+    @PrimaryKey val id: String = java.util.UUID.randomUUID().toString(),
+    val exerciseId: String,
+    val exerciseName: String,
+    val maxWeight: Float,          // 最大重量 (kg)
+    val maxReps: Int,              // 最大次数
+    val estimated1RM: Float,       // 预估 1RM
+    val maxVolume: Float,          // 最大容量 (重量×次数)
+    val updatedAt: Long = System.currentTimeMillis()
+)

@@ -1,7 +1,5 @@
 package com.gymlog.app.ui.screens
 
-package com.gymlog.app.ui.screens
-
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
