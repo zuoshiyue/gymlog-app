@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.gymlog.app.data.local.GymLogDatabase
+import com.gymlog.app.data.local.PersonalBest
 import com.gymlog.app.data.model.WorkoutDay
 import com.gymlog.app.data.model.WorkoutSession
 import com.gymlog.app.data.repository.WorkoutRepository
