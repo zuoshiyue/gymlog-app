@@ -156,7 +156,7 @@ class WorkoutRepository(private val dao: WorkoutDao) {
             
             val totalVolume = completedExercise.sets
                 .filter { it.completed }
-                .sumOf { it.weight * it.reps }
+                .sumOf { (it.weight * it.reps).toDouble() }
             
             val existingPB = dao.getPersonalBestByExercise(completedExercise.exerciseId)
             
