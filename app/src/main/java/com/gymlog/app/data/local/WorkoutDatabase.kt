@@ -131,11 +131,12 @@ class Converters {
  */
 @Entity(tableName = "personal_bests")
 data class PersonalBest(
-    @PrimaryKey val exerciseId: String,
+    @PrimaryKey val id: String = java.util.UUID.randomUUID().toString(),
+    val exerciseId: String,
     val exerciseName: String,
     val maxWeight: Float,
     val maxReps: Int,
     val estimated1RM: Float,
-    val maxVolume: Float, // 最大容量 = 重量 x 组数 x 次数
+    val maxVolume: Float,
     val updatedAt: Long = System.currentTimeMillis()
 )
