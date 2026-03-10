@@ -2,6 +2,7 @@ package com.gymlog.app.data.repository
 
 import com.gymlog.app.data.local.WorkoutDao
 import com.gymlog.app.data.local.DefaultWorkoutTemplates
+import com.gymlog.app.data.local.PersonalBest
 import com.gymlog.app.data.model.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.Dispatchers
