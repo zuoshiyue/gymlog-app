@@ -25,19 +25,28 @@ import com.gymlog.app.data.model.SplitType
 fun PlanListScreen(
     plans: List<WorkoutPlan>,
     onImportDefault: () -> Unit,
+    onCreateCustom: () -> Unit,
+    onNavigateToTimer: () -> Unit,
     onPlanClick: (WorkoutPlan) -> Unit,
     onDeletePlan: (WorkoutPlan) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showAddPlanDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
+    var planToDelete by remember { mutableStateOf<WorkoutPlan?>(null) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("我的训练计划", fontWeight = FontWeight.Bold) },
                 actions = {
+                    IconButton(onClick = onNavigateToTimer) {
+                        Icon(Icons.Default.Timer, contentDescription = "休息计时器")
+                    }
                     IconButton(onClick = { showAddPlanDialog = true }) {
-                        Icon(Icons.Default.Add, contentDescription = "导入计划")
+                        Icon(Icons.Default.Add, contentDescription = "添加计划")
                     }
                 }
             )
@@ -49,7 +58,10 @@ fun PlanListScreen(
                 .padding(padding)
         ) {
             if (plans.isEmpty()) {
-                EmptyPlanState(onImportDefault = onImportDefault)
+                EmptyPlanState(
+                    onImportDefault = onImportDefault,
+                    onCreateCustom = onCreateCustom
+                )
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
@@ -60,7 +72,11 @@ fun PlanListScreen(
                         PlanCard(
                             plan = plan,
                             onClick = { onPlanClick(plan) },
-                            onDelete = { onDeletePlan(plan) }
+                            onEdit = { onPlanClick(plan) },
+                            onDelete = {
+                                planToDelete = plan
+                                showDeleteConfirmDialog = true
+                            }
                         )
                     }
                 }
@@ -74,13 +90,33 @@ fun PlanListScreen(
                 onImportDefault()
                 showAddPlanDialog = false
             },
+            onCreateCustom = {
+                onCreateCustom()
+                showAddPlanDialog = false
+            },
             onDismiss = { showAddPlanDialog = false }
+        )
+    }
+
+    if (showDeleteConfirmDialog && planToDelete != null) {
+        DeleteConfirmationDialog(
+            planName = planToDelete!!.name,
+            onConfirm = {
+                onDeletePlan(planToDelete!!)
+            },
+            onDismiss = {
+                showDeleteConfirmDialog = false
+                planToDelete = null
+            }
         )
     }
 }
 
 @Composable
-private fun EmptyPlanState(onImportDefault: () -> Unit) {
+private fun EmptyPlanState(
+    onImportDefault: () -> Unit,
+    onCreateCustom: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -105,15 +141,41 @@ private fun EmptyPlanState(onImportDefault: () -> Unit) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "导入经典的三分化训练计划开始吧！",
+                text = "导入模板或创建自定义计划开始吧！",
                 fontSize = 14.sp,
                 color = Color.Gray
             )
             Spacer(modifier = Modifier.height(24.dp))
-            Button(onClick = onImportDefault) {
+            Button(
+                onClick = onImportDefault,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .heightIn(min = 48.dp)
+            ) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("导入三分化训练计划")
+                Text(
+                    "导入三分化训练计划",
+                    maxLines = 2,
+                    fontSize = 14.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            OutlinedButton(
+                onClick = onCreateCustom,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .heightIn(min = 48.dp)
+            ) {
+                Icon(Icons.Default.Edit, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    "创建自定义计划",
+                    maxLines = 2,
+                    fontSize = 14.sp
+                )
             }
         }
     }
@@ -123,6 +185,7 @@ private fun EmptyPlanState(onImportDefault: () -> Unit) {
 private fun PlanCard(
     plan: WorkoutPlan,
     onClick: () -> Unit,
+    onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
     Card(
@@ -154,12 +217,21 @@ private fun PlanCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                IconButton(onClick = onDelete) {
-                    Icon(
-                        Icons.Default.Delete,
-                        contentDescription = "删除",
-                        tint = MaterialTheme.colorScheme.error
-                    )
+                Row {
+                    IconButton(onClick = onEdit) {
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = "编辑",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    IconButton(onClick = onDelete) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = "删除",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))
@@ -203,15 +275,79 @@ private fun SplitTypeBadge(splitType: SplitType) {
 @Composable
 private fun AddPlanDialog(
     onImportDefault: () -> Unit,
+    onCreateCustom: () -> Unit,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("导入训练计划") },
-        text = { Text("选择要导入的训练计划模板") },
+        text = { Text("选择要导入的训练计划模板或创建自定义计划") },
         confirmButton = {
-            Button(onClick = onImportDefault) {
-                Text("导入三分化训练计划")
+            Column {
+                Button(
+                    onClick = {
+                        onImportDefault()
+                        onDismiss()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("导入三分化训练计划")
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedButton(
+                    onClick = {
+                        onCreateCustom()
+                        onDismiss()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("创建自定义计划")
+                }
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("取消")
+            }
+        }
+    )
+}
+
+/**
+ * 删除确认对话框
+ */
+@Composable
+private fun DeleteConfirmationDialog(
+    planName: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(
+                Icons.Default.Warning,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error
+            )
+        },
+        title = { Text("删除计划") },
+        text = {
+            Text("确定要删除「${planName}」吗？此操作不可撤销。")
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onConfirm()
+                    onDismiss()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text("删除")
             }
         },
         dismissButton = {

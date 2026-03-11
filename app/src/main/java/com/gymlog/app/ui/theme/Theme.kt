@@ -12,22 +12,39 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+// 健身主题配色 - 活力橙色为主色调
 private val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFFBB86FC),
-    secondary = Color(0xFF03DAC6),
-    tertiary = Color(0xFF3700B3)
+    primary = Color(0xFFFFAB40),        // 活力橙色
+    secondary = Color(0xFF40C4FF),      // 天空蓝色
+    tertiary = Color(0xFF80CBC4),       // 薄荷绿色
+    background = Color(0xFF121212),
+    surface = Color(0xFF1E1E1E),
+    error = Color(0xFFCF6679),
+    onPrimary = Color(0xFF000000),
+    onSecondary = Color(0xFF000000),
+    onBackground = Color(0xFFFFFFFF),
+    onSurface = Color(0xFFFFFFFF),
+    onError = Color(0xFF000000)
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF6200EE),
-    secondary = Color(0xFF03DAC5),
-    tertiary = Color(0xFF3700B3)
+    primary = Color(0xFFE65100),        // 深橙色
+    secondary = Color(0xFF039BE5),      // 蓝色
+    tertiary = Color(0xFF00897B),       // 青绿色
+    background = Color(0xFFFFFBFE),
+    surface = Color(0xFFFFFFFF),
+    error = Color(0xFFB00020),
+    onPrimary = Color(0xFFFFFFFF),
+    onSecondary = Color(0xFFFFFFFF),
+    onBackground = Color(0xFF1C1B1F),
+    onSurface = Color(0xFF1C1B1F),
+    onError = Color(0xFFFFFFFF)
 )
 
 @Composable
 fun GymLogTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,  // 默认关闭动态颜色，保持一致性
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -38,13 +55,13 @@ fun GymLogTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-    
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = colorScheme.surface.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 

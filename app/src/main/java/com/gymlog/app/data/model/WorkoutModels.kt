@@ -111,3 +111,12 @@ data class ActiveWorkout(
     val isResting: Boolean = false,
     val startTime: Long = System.currentTimeMillis()
 )
+
+/**
+ * 休息计时器记录
+ */
+data class RestTimerRecord(
+    val id: String,
+    val durationSeconds: Int,
+    val completedAt: Long
+)

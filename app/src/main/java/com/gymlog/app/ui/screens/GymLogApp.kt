@@ -47,12 +47,37 @@ fun GymLogApp() {
             PlanListScreen(
                 plans = plans,
                 onImportDefault = { viewModel.importDefaultPlan() },
+                onCreateCustom = {
+                    navController.navigate("plan_editor/new")
+                },
+                onNavigateToTimer = {
+                    navController.navigate("rest_timer")
+                },
                 onPlanClick = { plan ->
                     navController.navigate("plan_detail/${plan.id}")
                 },
                 onDeletePlan = { plan ->
                     viewModel.deletePlan(plan)
                 }
+            )
+        }
+
+        composable("plan_editor/new") {
+            PlanEditorScreen(
+                planId = null,
+                repository = repository,
+                onSave = { navController.popBackStack() },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("plan_editor/{planId}") { backStackEntry ->
+            val planId = backStackEntry.arguments?.getString("planId") ?: return@composable
+            PlanEditorScreen(
+                planId = planId,
+                repository = repository,
+                onSave = { navController.popBackStack() },
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -63,6 +88,9 @@ fun GymLogApp() {
                 repository = repository,
                 onStartWorkout = { workoutDay ->
                     navController.navigate("workout/${planId}/${workoutDay.id}")
+                },
+                onEditPlan = {
+                    navController.navigate("plan_editor/${planId}")
                 },
                 onBack = { navController.popBackStack() }
             )
@@ -117,6 +145,12 @@ fun GymLogApp() {
                 onBack = { navController.popBackStack() }
             )
         }
+
+        composable("rest_timer") {
+            RestTimerScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
     }
 }
 
@@ -129,6 +163,7 @@ fun PlanDetailScreen(
     planId: String,
     repository: WorkoutRepository,
     onStartWorkout: (WorkoutDay) -> Unit,
+    onEditPlan: () -> Unit,
     onBack: () -> Unit
 ) {
     val plan = remember(planId) {
@@ -147,6 +182,11 @@ fun PlanDetailScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "返回")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onEditPlan) {
+                        Icon(Icons.Default.Edit, contentDescription = "编辑计划")
                     }
                 }
             )
@@ -219,14 +259,20 @@ private fun WorkoutDayCard(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = onStartWorkout,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp)
             ) {
                 Icon(
                     Icons.Default.PlayArrow,
-                    contentDescription = null
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("开始训练")
+                Text(
+                    "开始训练",
+                    fontSize = 16.sp
+                )
             }
         }
     }

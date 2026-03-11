@@ -72,6 +72,137 @@ class WorkoutRepository(private val dao: WorkoutDao) {
         }
     }
 
+    /**
+     * 创建新的训练计划
+     */
+    suspend fun createPlan(
+        name: String,
+        description: String = "",
+        splitType: SplitType = SplitType.CUSTOM,
+        workoutDays: List<WorkoutDay> = emptyList()
+    ): WorkoutPlan {
+        return withContext(Dispatchers.IO) {
+            val plan = WorkoutPlan(
+                id = UUID.randomUUID().toString(),
+                name = name,
+                description = description,
+                splitType = splitType,
+                workoutDays = workoutDays,
+                createdAt = System.currentTimeMillis(),
+                updatedAt = System.currentTimeMillis()
+            )
+            dao.insertPlan(plan)
+            plan
+        }
+    }
+
+    /**
+     * 更新训练计划
+     */
+    suspend fun updatePlan(plan: WorkoutPlan): WorkoutPlan {
+        return withContext(Dispatchers.IO) {
+            val updated = plan.copy(updatedAt = System.currentTimeMillis())
+            dao.insertPlan(updated)
+            updated
+        }
+    }
+
+    // ============ 训练日管理 ============
+
+    /**
+     * 添加训练日到计划
+     */
+    suspend fun addWorkoutDayToPlan(planId: String, workoutDay: WorkoutDay): WorkoutPlan {
+        return withContext(Dispatchers.IO) {
+            val plan = dao.getPlanById(planId) ?: throw IllegalArgumentException("Plan not found")
+            val updatedDays = plan.workoutDays + workoutDay
+            val updated = plan.copy(workoutDays = updatedDays, updatedAt = System.currentTimeMillis())
+            dao.insertPlan(updated)
+            updated
+        }
+    }
+
+    /**
+     * 更新训练日
+     */
+    suspend fun updateWorkoutDay(planId: String, workoutDayId: String, updatedDay: WorkoutDay): WorkoutPlan {
+        return withContext(Dispatchers.IO) {
+            val plan = dao.getPlanById(planId) ?: throw IllegalArgumentException("Plan not found")
+            val updatedDays = plan.workoutDays.map { if (it.id == workoutDayId) updatedDay else it }
+            val updated = plan.copy(workoutDays = updatedDays, updatedAt = System.currentTimeMillis())
+            dao.insertPlan(updated)
+            updated
+        }
+    }
+
+    /**
+     * 从计划中删除训练日
+     */
+    suspend fun deleteWorkoutDayFromPlan(planId: String, workoutDayId: String): WorkoutPlan {
+        return withContext(Dispatchers.IO) {
+            val plan = dao.getPlanById(planId) ?: throw IllegalArgumentException("Plan not found")
+            val updatedDays = plan.workoutDays.filter { it.id != workoutDayId }
+            val updated = plan.copy(workoutDays = updatedDays, updatedAt = System.currentTimeMillis())
+            dao.insertPlan(updated)
+            updated
+        }
+    }
+
+    // ============ 动作管理 ============
+
+    /**
+     * 添加动作到训练日
+     */
+    suspend fun addExerciseToWorkoutDay(planId: String, workoutDayId: String, exercise: Exercise): WorkoutPlan {
+        return withContext(Dispatchers.IO) {
+            val plan = dao.getPlanById(planId) ?: throw IllegalArgumentException("Plan not found")
+            val updatedDays = plan.workoutDays.map { day ->
+                if (day.id == workoutDayId) {
+                    day.copy(exercises = day.exercises + exercise)
+                } else day
+            }
+            val updated = plan.copy(workoutDays = updatedDays, updatedAt = System.currentTimeMillis())
+            dao.insertPlan(updated)
+            updated
+        }
+    }
+
+    /**
+     * 更新训练日中的动作
+     */
+    suspend fun updateExerciseInWorkoutDay(planId: String, workoutDayId: String, exerciseId: String, updatedExercise: Exercise): WorkoutPlan {
+        return withContext(Dispatchers.IO) {
+            val plan = dao.getPlanById(planId) ?: throw IllegalArgumentException("Plan not found")
+            val updatedDays = plan.workoutDays.map { day ->
+                if (day.id == workoutDayId) {
+                    day.copy(exercises = day.exercises.map { ex ->
+                        if (ex.id == exerciseId) updatedExercise else ex
+                    })
+                } else day
+            }
+            val updated = plan.copy(workoutDays = updatedDays, updatedAt = System.currentTimeMillis())
+            dao.insertPlan(updated)
+            updated
+        }
+    }
+
+    /**
+     * 从训练日中删除动作
+     */
+    suspend fun deleteExerciseFromWorkoutDay(planId: String, workoutDayId: String, exerciseId: String): WorkoutPlan {
+        return withContext(Dispatchers.IO) {
+            val plan = dao.getPlanById(planId) ?: throw IllegalArgumentException("Plan not found")
+            val updatedDays = plan.workoutDays.map { day ->
+                if (day.id == workoutDayId) {
+                    day.copy(exercises = day.exercises.filter { it.id != exerciseId })
+                } else day
+            }
+            val updated = plan.copy(workoutDays = updatedDays, updatedAt = System.currentTimeMillis())
+            dao.insertPlan(updated)
+            updated
+        }
+    }
+
     // ============ 训练会话管理 ============
     
     val allSessions: Flow<List<WorkoutSession>> = dao.getAllSessions()

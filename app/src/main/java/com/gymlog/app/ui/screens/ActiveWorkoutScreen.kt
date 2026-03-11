@@ -123,14 +123,19 @@ fun ActiveWorkoutScreen(
                     // 添加组按钮
                     Button(
                         onClick = { activeWorkoutViewModel.addSet() },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 48.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.outline
                         )
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = null)
+                        Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(20.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("添加一组")
+                        Text(
+                            "添加一组",
+                            fontSize = 14.sp
+                        )
                     }
                 }
             }
@@ -333,41 +338,81 @@ private fun WorkoutBottomBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = 12.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            // 上一个按钮 - 使用较小宽度确保有足够空间
             OutlinedButton(
                 onClick = onPrevious,
-                enabled = canGoPrevious
+                enabled = canGoPrevious,
+                modifier = Modifier
+                    .weight(1f)
+                    .heightIn(min = 48.dp),
+                contentPadding = PaddingValues(horizontal = 8.dp)
             ) {
-                Icon(Icons.Default.ArrowBack, contentDescription = null)
+                Icon(Icons.Default.ArrowBack, contentDescription = null, modifier = Modifier.size(20.dp))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("上一个")
+                Text(
+                    "上一个",
+                    maxLines = 1,
+                    fontSize = 13.sp
+                )
             }
 
+            // 中间按钮 - 根据状态显示开始/停止休息
             if (isResting) {
                 Button(
                     onClick = onStopRest,
+                    modifier = Modifier
+                        .weight(1.2f)
+                        .heightIn(min = 48.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.error
-                    )
+                    ),
+                    contentPadding = PaddingValues(horizontal = 8.dp)
                 ) {
-                    Icon(Icons.Default.Stop, contentDescription = null)
+                    Icon(Icons.Default.Stop, contentDescription = null, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("停止休息")
+                    Text(
+                        "停止休息",
+                        maxLines = 1,
+                        fontSize = 13.sp
+                    )
                 }
             } else {
-                Button(onClick = onStartRest) {
-                    Icon(Icons.Default.Timer, contentDescription = null)
+                // 开始休息按钮 - 文本较长，需要更多空间
+                Button(
+                    onClick = onStartRest,
+                    modifier = Modifier
+                        .weight(1.5f)
+                        .heightIn(min = 48.dp),
+                    contentPadding = PaddingValues(horizontal = 8.dp)
+                ) {
+                    Icon(Icons.Default.Timer, contentDescription = null, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("开始休息 ${restTimeSeconds}s")
+                    Text(
+                        "休息 ${restTimeSeconds}s",
+                        maxLines = 1,
+                        fontSize = 13.sp
+                    )
                 }
             }
 
-            Button(onClick = onNext) {
-                Text("下一个")
+            // 下一个按钮
+            Button(
+                onClick = onNext,
+                modifier = Modifier
+                    .weight(1f)
+                    .heightIn(min = 48.dp),
+                contentPadding = PaddingValues(horizontal = 8.dp)
+            ) {
+                Text(
+                    "下一个",
+                    maxLines = 1,
+                    fontSize = 13.sp
+                )
                 Spacer(modifier = Modifier.width(4.dp))
-                Icon(Icons.Default.ArrowForward, contentDescription = null)
+                Icon(Icons.Default.ArrowForward, contentDescription = null, modifier = Modifier.size(20.dp))
             }
         }
     }
@@ -431,9 +476,14 @@ private fun WorkoutCompleteScreen(
             Spacer(modifier = Modifier.height(32.dp))
             Button(
                 onClick = onComplete,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp)
             ) {
-                Text("保存训练记录")
+                Text(
+                    "保存训练记录",
+                    fontSize = 16.sp
+                )
             }
         }
     }
